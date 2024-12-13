@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block titulo %} Formulario de Produtos {% endblock %}
+
+{% block titulo_page %} Cadastro de produto {% endblock %}
+
+{% block conteudo %}
+
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <label for="id.nome">Nome</label>
+            <input type="text" name="nome" class="form-control" placeholder="Nome" maxlength="100" required id="id_nome">
+        </p>
+
+
+        <p>
+            <label for="id.nome">Ordem</label>
+            <input type="number" name="ordem" class="inteiro form-control" placeholder=""  required id="id_ordem">
+        </p>
+
+            <button type="submit" class="btn btn-success">Cadastrar</button>
+            <button type="submit" onclick="location.href=' {% url "categoria" %}'" class="btn btn-danger">Cancelar</button>
+    </form>
+
+{% endblock %}
