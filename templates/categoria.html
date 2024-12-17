@@ -5,6 +5,7 @@
    
     <table class="table table-bordered table-hover w-75 mx-auto">
         <button type="button" class="btn btn-outline-primary" onclick="location.href='{% url "formulario" %}'" ><i class="bi bi-plus-lg"></i>Novo produto</button>
+        <button style="margin-left: 10px" type="button" class="btn btn-outline-primary" onclick="location.href='{% url "categoria" %}'" ><i class="bi bi-arrow-clockwise"></i>Reloding</button>
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Código</th>
@@ -20,9 +21,9 @@
                     <td> {{item.nome}} </td>
                     <td> {{item.ordem}} </td>
                     <td> 
-                        <button onclick="" class="btn btn-info"> Detalhes </button>
-                        <button onclick="" class="btn btn-warning"> Editar </button>
-                        <button onclick="" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluir"> Excluir </button>
+                        <button type="button" onclick="location.href=' {% url "detail_categoria" item.id %}'" class="btn btn-info"> Detalhes </button>
+                        <button type="button" onclick="location.href=' {% url "editar_categoria" item.id %}'" class="btn btn-warning"> Editar </button>
+                        <button type="button" onclick="location.href=' {% url "delet_categoria" item.id %}'" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluir"> Excluir </button>
 
                     </td>
                 </tr>

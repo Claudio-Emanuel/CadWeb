@@ -10,8 +10,7 @@
         {% csrf_token %}
         {{ form.as_p }}
 
-            <button type="submit" class="btn btn-success">Cadastrar</button>
-            <button type="button" onclick="location.href=' {% url "categoria" %}'" class="btn btn-danger">Cancelar</button>
+            <button type="button" onclick="location.href=' {% url "categoria" %}'" class="btn btn-info">Voltar</button>
     </form>
 
 {% endblock %}
