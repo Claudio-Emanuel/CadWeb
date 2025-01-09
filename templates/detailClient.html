@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block titulo %} Formulario de Produtos {% endblock %}
+
+{% block titulo_page %} Cadastro de produto {% endblock %}
+
+{% block conteudo %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+            <button type="button" onclick="location.href=' {% url "cliente" %}'" class="btn btn-info">Voltar</button>
+    </form>
+
+{% endblock %}

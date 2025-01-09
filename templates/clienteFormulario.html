@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block titulo %} Form to Clients {% endblock %}
+
+{% block titulo_page %} Sing in Clients {% endblock %}
+
+{% block conteudo %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+            <button type="submit" class="btn btn-success">Salvar</button>
+            <button type="button" onclick="location.href=' {% url "cliente" %}'" class="btn btn-danger">Voltar</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo_page %} Client {% endblock %}
+{%block conteudo%} 
+   
+    <table class="table table-bordered table-hover w-75 mx-auto">
+        <button type="button" class="btn btn-outline-primary" onclick="location.href='{% url "clienteFormulario" %}'" ><i class="bi bi-plus-lg"></i>New Client</button>
+        <button style="margin: 10px" type="button" class="btn btn-outline-primary" onclick="location.href='{% url "cliente" %}'" ><i class="bi bi-arrow-clockwise"></i>Reloding</button>
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">CPF</th>
+                <th scope="col">DataNasc</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in lista %}
+                <tr>
+                    <td> {{item.id}} </td>
+                    <td> {{item.nome}} </td>
+                    <td> {{item.cpf}} </td>
+                    <td> {{item.datanasc}} </td>
+                    <td> 
+                        <button type="button" onclick="location.href=' {% url "detailClient" item.id %}'" class="btn btn-info"> Detalhes </button>
+                        <button type="button" onclick="location.href=' {% url "editar_cliente" item.id %}'" class="btn btn-warning"> Editar </button>
+                        <button type="button" onclick="location.href=' {% url "delet_cliente" item.id %}'" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluir"> Excluir </button>
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+ {% endblock %}

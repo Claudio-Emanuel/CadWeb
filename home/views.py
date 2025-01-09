@@ -77,4 +77,70 @@ def detail_categoria(request,id):
     else:
         form = CategoriaForm(instance=categoria)
     return render(request, 'detail.html', {'form': form,})
-    
+
+#--------------------------------------------------------    
+def cliente(request):
+    contexto = {
+        'lista' : Cliente.objects.all().order_by('id'),
+    }
+    return render(request, 'cliente.html',contexto)
+#--------------------------------------------------------    
+def form_cliente(request):
+
+    if request.method == 'POST': 
+        form=ClienteForm(request.POST)
+#--------------------------------------------------------    
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Registro realizado com sucesso!!')
+            return redirect('cliente')
+    else:
+        form=ClienteForm()
+#--------------------------------------------------------    
+    contexto = {
+        'form' : form,
+    }
+    return render(request, 'clienteFormulario.html', contexto )
+#--------------------------------------------------------      
+def delet_cliente(request,id):
+    try:
+        categoria = Cliente.objects.get(pk=id)
+        categoria.delete()
+        messages.info(request, 'Item deletado com sucesso!!!')
+
+    except Cliente.DoesNotExist:
+        messages.error(request, 'Não foi possível encontrar o cliente solicitado')
+        return redirect('cliente')
+    return redirect('cliente')
+#--------------------------------------------------------
+def detail_cliente(request,id):
+    try:
+        cliente = Cliente.objects.get(pk=id)
+    except Cliente.DoesNotExist:
+        messages.error(request, 'Não foi possível encontrar o cliente solicitad')
+        return redirect('cliente')
+        
+    if request.method == 'POST':
+        ClienteForm(request.POST, instance=cliente)
+    else:
+        form = ClienteForm(instance=cliente)
+    return render(request, 'detailClient.html', {'form': form,})
+#--------------------------------------------------------
+def editar_cliente(request, id):
+    try:
+        cliente = Cliente.objects.get(pk=id)
+    except Cliente.DoesNotExist:
+        messages.error(request, 'Não foi possível encontrar o cliente solicitad')
+        return redirect('cliente')
+        
+    if request.method == 'POST':
+        # combina os dados do formulário submetido com a instância do objeto existente, permitindo editar seus valores.
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            cliente = form.save() # save retorna o objeto salvo
+            lista = []
+            lista.append(cliente) 
+            return render(request, 'cliente.html', {'lista': lista})
+    else:
+         form = ClienteForm(instance=cliente)
+    return render(request, 'clienteFormulario.html', {'form': form,})
