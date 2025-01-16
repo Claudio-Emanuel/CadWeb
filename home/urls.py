@@ -12,5 +12,10 @@ urlpatterns = [
     path('clienteFormulario', views.form_cliente, name='clienteFormulario'),
     path('delet_cliente/<int:id>',views.delet_cliente, name='delet_cliente'),
     path('detail_cliente/<int:id>',views.detail_cliente, name='detailClient'),
-     path('editar_cliente/<int:id>',views.editar_cliente, name='editar_cliente'),
+    path('editar_cliente/<int:id>',views.editar_cliente, name='editar_cliente'),
+    path('produto', views.produto, name='produto'),
+    path('produtoFormulario', views.form_produto, name='produtoFormulario'),
+    path('delet_produto/<int:id>',views.delet_produto, name='delet_produto'),
+    path('detail_produto/<int:id>',views.detail_produto, name='detail_produto'),
+    path('editar_produto/<int:id>',views.editar_produto, name='editar_produto'),
 ]
