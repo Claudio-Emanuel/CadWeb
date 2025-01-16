@@ -23,7 +23,7 @@
                     <td> 
                         <button type="button" onclick="location.href=' {% url "detail_categoria" item.id %}'" class="btn btn-info"> Detalhes </button>
                         <button type="button" onclick="location.href=' {% url "editar_categoria" item.id %}'" class="btn btn-warning"> Editar </button>
-                        <button type="button" onclick="location.href=' {% url "delet_categoria" item.id %}'" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluir"> Excluir </button>
+                        <button type="button" onclick="confirmClose(' {% url "delet_categoria" item.id %}')" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluir"> Excluir </button>
 
                     </td>
                 </tr>
