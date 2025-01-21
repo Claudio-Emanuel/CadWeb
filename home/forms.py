@@ -42,6 +42,7 @@ class ClienteForm(forms.ModelForm):
         return data
 
 class ProdutoForm(forms.ModelForm):
+    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True)
     class Meta:
         model = Produto
         fields = ['nome', 'preco', 'categoria','img_base64']
@@ -67,3 +68,17 @@ class ProdutoForm(forms.ModelForm):
         self.fields['preco'].localize = True
         self.fields['preco'].widget.is_localized = True   
 
+class EstoqueForm(forms.ModelForm):
+    class Meta:
+        model = Estoque
+        fields = ['produto','qtde']
+        widgets = {
+            'produto': forms.HiddenInput(),
+            'qtde': forms.TextInput(attrs={'class': 'inteiro form-control', 'placeholder': 'Quantidade'}),
+        }
+        
+    def clean_qtde(self):
+        qtde = self.cleaned_data.get('qtde')
+        if qtde <= 0:
+            raise forms.ValidationError("O campo quantidade deve ser maior que zero.")
+        return qtde

@@ -1,16 +1,42 @@
 {% extends 'base.html' %}
 
-{% block titulo %} Formulario de Produtos {% endblock %}
 
-{% block titulo_page %} Cadastro de produto {% endblock %}
+{% block titulo  %} Contato {% endblock %}
 
-{% block conteudo %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+{% block titulo_conteudo %} Detalhes do Cliente {% endblock %}
 
-            <button type="button" onclick="location.href=' {% url "cliente" %}'" class="btn btn-info">Voltar</button>
-    </form>
+
+
+
+
+
+{% block conteudo  %}  
+   
+    <p>
+    <label >ID:</label><br>
+    <span class="form-control">{{cliente.id}}</span>
+    
+    </p>
+
+
+    <p>
+    <label >Nome:</label><br>
+    <span class="form-control">{{cliente.nome}}</span>
+    </p>
+
+
+    <p>
+    <label >CPF:</label><br>
+    <span class="form-control">{{cliente.cpf}}</span>
+    </p>
+
+    <p>
+        <label >DataNasc</label><br>
+        <span class="form-control">{{cliente.datanasc}}</span>
+    </p>
+
+
+
 
 {% endblock %}

@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect
+
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
 from .forms import *
@@ -7,7 +8,10 @@ from .forms import *
 #--------------------------------------------------------    
 def index(request):
     return render(request,'index.html')
-#--------------------------------------------------------    
+
+
+
+#---------------------------------------------------------------------Categoria---------------------------------------------------------------------
 def categoria(request):
     contexto = {
         'lista' : Categoria.objects.all().order_by('id'),
@@ -61,47 +65,48 @@ def delet_categoria(request,id):
 
     except Categoria.DoesNotExist:
         messages.error(request, 'Não foi possível encontrar a categoria solicitada')
-        return redirect('categoria/categoria')
-    return redirect('categoria/categoria')
+        return redirect('categoria')
+    return redirect('categoria')
 
 #------------Funcao de Detalhar Categoria de Produto------------ 
 def detail_categoria(request,id):
     try:
-        categoria = Categoria.objects.get(pk=id)
+        categoria = get_object_or_404(Categoria, pk=id)
     except Categoria.DoesNotExist:
         messages.error(request, 'Não foi possível encontrar a categoria solicitada')
-        return redirect('categoria/categoria')
-        
-    if request.method == 'POST':
-        CategoriaForm(request.POST, instance=categoria)
-    else:
-        form = CategoriaForm(instance=categoria)
-    return render(request, 'categoria/detail.html', {'form': form,})
+        return redirect('categoria')
+    return render(request, 'categoria/detail.html', {'categoria': categoria})
+#---------------------------------------------------------------------Categoria---------------------------------------------------------------------
 
-#--------------------------------------------------------    
+
+#---------------------------------------------------------------------Cliente---------------------------------------------------------------------
 def cliente(request):
     contexto = {
         'lista' : Cliente.objects.all().order_by('id'),
     }
     return render(request, 'cliente/cliente.html',contexto)
-#--------------------------------------------------------    
+
+
 def form_cliente(request):
 
     if request.method == 'POST': 
         form=ClienteForm(request.POST)
-#--------------------------------------------------------    
+
+
         if form.is_valid():
             form.save()
             messages.success(request, 'Registro realizado com sucesso!!')
-            return redirect('cliente/cliente')
+            return redirect('cliente')
     else:
         form=ClienteForm()
-#--------------------------------------------------------    
+
+
     contexto = {
         'form' : form,
     }
     return render(request, 'cliente/clienteFormulario.html', contexto )
-#--------------------------------------------------------      
+
+
 def delet_cliente(request,id):
     try:
         categoria = Cliente.objects.get(pk=id)
@@ -110,28 +115,26 @@ def delet_cliente(request,id):
 
     except Cliente.DoesNotExist:
         messages.error(request, 'Não foi possível encontrar o cliente solicitado')
-        return redirect('cliente/cliente')
-    return redirect('cliente/cliente')
-#--------------------------------------------------------
+        return redirect('cliente')
+    return redirect('cliente')
+
+
 def detail_cliente(request,id):
     try:
-        cliente = Cliente.objects.get(pk=id)
+        cliente = get_object_or_404(Cliente, pk=id)
     except Cliente.DoesNotExist:
         messages.error(request, 'Não foi possível encontrar o cliente solicitad')
-        return redirect('cliente/cliente')
+        return redirect('cliente')
         
-    if request.method == 'POST':
-        ClienteForm(request.POST, instance=cliente)
-    else:
-        form = ClienteForm(instance=cliente)
-    return render(request, 'cliente/detailClient.html', {'form': form,})
-#--------------------------------------------------------
+    return render(request, 'cliente/detailClient.html', {'cliente': cliente})
+
+
 def editar_cliente(request, id):
     try:
         cliente = Cliente.objects.get(pk=id)
     except Cliente.DoesNotExist:
         messages.error(request, 'Não foi possível encontrar o cliente solicitad')
-        return redirect('cliente/cliente')
+        return redirect('cliente')
         
     if request.method == 'POST':
         # combina os dados do formulário submetido com a instância do objeto existente, permitindo editar seus valores.
@@ -140,7 +143,81 @@ def editar_cliente(request, id):
             cliente = form.save() # save retorna o objeto salvo
             lista = []
             lista.append(cliente) 
-            return render(request, 'cliente/cliente.html', {'lista': lista})
+            return render(request, 'cliente.html', {'lista': lista})
     else:
          form = ClienteForm(instance=cliente)
     return render(request, 'cliente/clienteFormulario.html', {'form': form,})
+
+#---------------------------------------------------------------------Cliente---------------------------------------------------------------------
+
+#---------------------------------------------------------------------Produto---------------------------------------------------------------------
+
+def produto(request):
+        contexto = {
+            'lista' : Produto.objects.all().order_by('id'),
+        }
+        return render(request, 'produto/produto.html',contexto)
+    
+def form_produto(request):
+    categorias = Categoria.objects.all()
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('produto')
+    else:
+        form = ProdutoForm()
+    return render(request, 'produto/form_produto.html', {'form': form, 'categorias': categorias})
+
+def delet_produto(request,produto_id):
+    try:
+        produto = Produto.objects.get(id=produto_id)
+        produto.delete()
+        messages.success(request, 'Exclusão realizada com Sucesso.')
+    except:
+        messages.error(request, 'Registro não encontrado')
+        return redirect('produto')
+    
+    return redirect('produto')
+
+def editar_produto(request, produto_id):
+    produto = get_object_or_404(Produto, id=produto_id)
+    if request.method == 'POST':
+        form = ProdutoForm(request.POST, instance=produto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Produto atualizado com sucesso.')
+            return redirect('produto')  # Redireciona para a lista de produtos após salvar
+    else:
+        form = ProdutoForm(instance=produto)
+    return render(request, 'produto/form_produto.html', {'form': form})
+
+
+
+def detail_produto(request,id):
+    try:
+        produto = get_object_or_404(Produto, pk=id)
+    except Produto.DoesNotExist:
+        messages.error(request, 'Não foi possível encontrar o cliente solicitad')
+        return redirect('produto')
+    return render(request, 'produto/detail_produto.html', {'produto': produto})
+#---------------------------------------------------------------------Produto---------------------------------------------------------------------
+
+#---------------------------------------------------------------------Estoque---------------------------------------------------------------------
+def ajustar_estoque(request,id):
+    produto = get_object_or_404(Produto, id=id)
+    try:
+        estoque = produto.estoque
+    except Estoque.DoesNotExist:
+        estoque = Estoque(produto=produto)
+    
+    if request.method == 'POST':
+        form = EstoqueForm(request.POST, instance=estoque)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Estoque atualizado com sucesso.')
+            return redirect('produto')
+    else:
+        form = EstoqueForm(instance=estoque)
+    
+    return render(request, 'produto/estoque.html', {'form': form, 'produto': produto})

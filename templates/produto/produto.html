@@ -1,0 +1,52 @@
+{%extends 'base.html'%}
+{%block titulo_conteudo%} Listagem de Produtos {%endblock titulo_conteudo%}
+{%block conteudo%} 
+<div class="barrabotoes">
+    <button onClick="location='{% url "produtoFormulario" %}'" type="button" class="btn btn-primary btn-sm">Inserir Novo</button>
+    <button onClick="location='{% url "produto" %}'" type="button" class="btn btn-primary btn-sm">Recarregar</button>
+    
+    </div>
+    
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Preço(R$)</th>
+            <th>Categoria</th>
+            <th>Qtde</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for produto in lista %}
+          <tr>
+            <td style="vertical-align: middle;">{{ produto.id }}</td>
+            <td><img src="{{ produto.img_base64 }}" width="55px" height="auto"></td>
+            <td style="vertical-align: middle;">{{ produto.nome }}</td>
+            <td style="vertical-align: middle;">{{ produto.preco}}</td>
+            <td style="vertical-align: middle;">{{ produto.categoria.nome }}</td>
+            <td style="vertical-align: middle;">{{ produto.estoque.qtde }}</td>
+            <td style="vertical-align: middle;">
+              <button onclick="location.href='{% url 'detailproduto' produto.id %}'" class="btn btn-info btn-sm">Detalhes </button>
+              <button onclick="location.href='{% url 'ajustar_estoque' produto.id %}'" class="btn btn-success btn-sm">Estoque </button>
+              <button onClick="location.href= '{% url 'editar_produto' produto.id %}'" class="btn btn-warning btn-sm">Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="return confirmClose('{% url "delet_produto" produto.id %}');">Remover</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <script> 
+        function confirmClose(url) {
+            const confirmar = confirm("Confirme para excluir a categoria selecionada?");
+            if (confirmar) {
+                window.location.href = url; 
+            }
+            return false;
+        }
+    </script>
+    
+{% endblock conteudo %}

@@ -1,16 +1,36 @@
 {% extends 'base.html' %}
 
-{% block titulo %} Formulario de Categoria {% endblock %}
 
-{% block titulo_page %} Cadastro de Categoria {% endblock %}
+{% block titulo  %} Categoria] {% endblock %}
 
-{% block conteudo %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+{% block titulo_conteudo %} Detalhes da Categoria {% endblock %}
 
-            <button type="button" onclick="location.href=' {% url "categoria" %}'" class="btn btn-info">Voltar</button>
-    </form>
+
+
+
+
+
+{% block conteudo  %}  
+   
+    <p>
+    <label >ID:</label><br>
+    <span class="form-control">{{categoria.id}}</span>
+    
+    </p>
+
+
+    <p>
+    <label >Nome:</label><br>
+    <span class="form-control">{{categoria.nome}}</span>
+    </p>
+
+
+    <p>
+    <label >Ordem:</label><br>
+    <span class="form-control">{{categoria.ordem}}</span>
+    </p>
+
+
 
 {% endblock %}
