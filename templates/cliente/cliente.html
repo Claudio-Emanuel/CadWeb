@@ -22,6 +22,7 @@
                     <td> {{item.cpf}} </td>
                     <td> {{item.datanasc}} </td>
                     <td> 
+                        <button onClick="location='{% url 'novo_pedido' item.id %}'" type="button" class="btn btn-primary btn-sm">Novo pedido</button>
                         <button type="button" onclick="location.href=' {% url "detailClient" item.id %}'" class="btn btn-info"> Detalhes </button>
                         <button type="button" onclick="location.href=' {% url "editar_cliente" item.id %}'" class="btn btn-warning"> Editar </button>
                         <button type="button" onclick="location.href=' {% url "delet_cliente" item.id %}'" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#excluir"> Excluir </button>

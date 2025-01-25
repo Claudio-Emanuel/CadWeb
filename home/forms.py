@@ -82,3 +82,11 @@ class EstoqueForm(forms.ModelForm):
         if qtde <= 0:
             raise forms.ValidationError("O campo quantidade deve ser maior que zero.")
         return qtde
+    
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['cliente']
+        widgets = {
+            'cliente': forms.HiddenInput(),  # Campo oculto para armazenar o ID
+        }

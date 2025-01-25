@@ -19,5 +19,11 @@ urlpatterns = [
     path('editar_produto/<int:produto_id>', views.editar_produto, name='editar_produto'),
     path('detail_produto/<int:id>',views.detail_produto, name='detailproduto'),
     path('ajustar_estoque/<int:id>',views.ajustar_estoque, name='ajustar_estoque'),
+    path('teste', views.teste_1, name='teste1'),
+    path('teste2', views.teste_2, name='teste2'),
+    path('teste3', views.teste_3, name='teste3'),
+    path('buscar_dados/<str:app_modelo>', views.buscar_dados, name='buscar_dados'),
+    path('pedido', views.pedido, name='pedido'),
+    path('novo_pedido/<int:id>', views.novo_pedido, name='novo_pedido'),
 
 ]

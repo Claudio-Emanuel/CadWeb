@@ -1,6 +1,8 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.http import JsonResponse
+from django.apps import apps
 from .models import *
 from .forms import *
 
@@ -221,3 +223,50 @@ def ajustar_estoque(request,id):
         form = EstoqueForm(instance=estoque)
     
     return render(request, 'produto/estoque.html', {'form': form, 'produto': produto})
+
+def teste_1(request):
+    return render(request, 'teste/teste1.html')
+
+def teste_2(request):
+    return render(request, 'teste/teste2.html')
+
+def teste_3(request):
+    return render(request, 'teste/teste3.html')
+
+
+def buscar_dados(request, app_modelo):
+    termo = request.GET.get('q', '') # pega o termo digitado
+    try:
+        # Divida o app e o modelo
+        app, modelo = app_modelo.split('.')
+        modelo = apps.get_model(app, modelo)
+    except LookupError:
+        return JsonResponse({'error': 'Modelo não encontrado'}, status=404)
+    
+    # Verifica se o modelo possui os campos 'nome' e 'id'
+    if not hasattr(modelo, 'nome') or not hasattr(modelo, 'id'):
+        return JsonResponse({'error': 'Modelo deve ter campos "id" e "nome"'}, status=400)
+    
+    resultados = modelo.objects.filter(nome__icontains=termo)
+    dados = [{'id': obj.id, 'nome': obj.nome} for obj in resultados]
+    return JsonResponse(dados, safe=False)
+
+def pedido(request):
+    lista= Produto.objects.all().order_by('-id')
+    return render(request, 'pedido/pedido.html', {'lista': lista})
+
+def novo_pedido(request,id):
+    if request.method == 'GET':
+        try:
+            cliente = Cliente.objects.get(pk=id)
+        except Cliente.DoesNotExist:
+            messages.error(request, 'Registro não encontrado')
+            return redirect('cliente')  
+        pedido = Pedido(cliente=cliente)
+        form = PedidoForm(instance=pedido)# cria um formulario com o novo pedido
+        return render(request, 'pedido/form.html',{'form': form,})
+    else: # se for metodo post, salva o pedido.
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            pedido = form.save()
+            return redirect('pedido')
