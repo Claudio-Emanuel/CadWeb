@@ -74,7 +74,7 @@ class Pedido(models.Model):
             return f"Pedido {self.id} - Cliente: {self.cliente.nome} - Status: {self.get_status_display()}"
     
     @property
-    def data_pedidof(self):
+    def data_pedido(self):
         if self.data_pedido:
             return self.data_pedido.strftime('%d/%m/%Y %H:%M:%S')
         return None
