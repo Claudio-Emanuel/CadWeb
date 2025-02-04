@@ -25,5 +25,5 @@ urlpatterns = [
     path('buscar_dados/<str:app_modelo>', views.buscar_dados, name='buscar_dados'),
     path('pedido', views.pedido, name='pedido'),
     path('novo_pedido/<int:id>', views.novo_pedido, name='novo_pedido'),
-
+    path('detail_pedido/<int:id>', views.detalhes_pedido, name='detalhes_pedido'),
 ]

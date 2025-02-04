@@ -28,7 +28,7 @@ def form_categoria(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Registro realizado com sucesso!!')
-            return redirect('categoria/categoria')
+            return redirect('categoria')
     else:
         form=CategoriaForm()
 #--------------------------------------------------------    
@@ -223,7 +223,7 @@ def ajustar_estoque(request,id):
         form = EstoqueForm(instance=estoque)
     
     return render(request, 'produto/estoque.html', {'form': form, 'produto': produto})
-
+#---------------------------------------------------------------------Estoque---------------------------------------------------------------------
 def teste_1(request):
     return render(request, 'teste/teste1.html')
 
@@ -251,9 +251,13 @@ def buscar_dados(request, app_modelo):
     dados = [{'id': obj.id, 'nome': obj.nome} for obj in resultados]
     return JsonResponse(dados, safe=False)
 
+
+
+
+#---------------------------------------------------------------------Pedido---------------------------------------------------------------------
 def pedido(request):
-    lista= Produto.objects.all().order_by('-id')
-    return render(request, 'pedido/pedido.html', {'lista': lista})
+    listaP = Pedido.objects.all().order_by('-id')
+    return render(request, 'pedido/pedido.html', {'listaP': listaP})
 
 def novo_pedido(request,id):
     if request.method == 'GET':
@@ -264,9 +268,27 @@ def novo_pedido(request,id):
             return redirect('cliente')  
         pedido = Pedido(cliente=cliente)
         form = PedidoForm(instance=pedido)# cria um formulario com o novo pedido
-        return render(request, 'pedido/form.html',{'form': form,})
+        return render(request, 'pedido/form.html',{'form': form})
     else: # se for metodo post, salva o pedido.
         form = PedidoForm(request.POST)
         if form.is_valid():
             pedido = form.save()
             return redirect('pedido')
+
+def detalhes_pedido(request,id):
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Não foi possível encontrar o pedido solicitado')
+        return redirect('pedido')
+    
+    if request.method == 'GET':
+        itemPedido = ItemPedido(pedido=pedido)
+        form = ItemPedidoForm(instance=itemPedido)
+    else:
+        form = ItemPedidoForm(request.POST)
+    contexto = {
+        'pedido': pedido,
+        'form': form,
+    }
+    return render(request, 'pedido/detalhes.html', contexto)
