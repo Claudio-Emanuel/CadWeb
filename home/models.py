@@ -107,8 +107,3 @@ class ItemPedido(models.Model):
     def Total_parcial(self):
         total = self.qtde * self.preco
         return total
-    
-    @property
-    def Total_pedido(self):
-        soma = sum(item.qtde * item.preco for item in self.itempedido_set.all())
-        return soma

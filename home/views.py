@@ -262,6 +262,7 @@ def pedido(request):
 def novo_pedido(request,id):
     if request.method == 'GET':
         try:
+            item_pedido = ItemPedido.objects.get(pk=id)
             cliente = Cliente.objects.get(pk=id)
         except Cliente.DoesNotExist:
             messages.error(request, 'Registro não encontrado')
@@ -269,19 +270,41 @@ def novo_pedido(request,id):
         pedido = Pedido(cliente=cliente)
         form = PedidoForm(instance=pedido)# cria um formulario com o novo pedido
         return render(request, 'pedido/form.html',{'form': form})
+    
     else: # se for metodo post, salva o pedido.
-        form = PedidoForm(request.POST)
+        form = PedidoForm(request.POST,instance=item_pedido)
+        pedido = item_pedido.pedido  
+        quantidade_anterior = item_pedido.qtde 
         if form.is_valid():
             pedido = form.save()
+            item_pedido = form.save(commit=False)  # prepara a instância do item_pedido sem persistir ainda
+            print(item_pedido.produto.id)
+            nova_quantidade = item_pedido.qtde
+            estoque_atual = item_pedido.produto.estoque.qtde
+
+            if estoque_atual >= nova_quantidade:
+                estoque_atual += quantidade_anterior
+                estoque_atual -= nova_quantidade
+
+                item_pedido.produto.estoque.qtde = estoque_atual
+
+                item_pedido.produto.estoque.save()
+                item_pedido.save()
+                messages.success(request, 'Operação realizada com Sucesso')
+
+            else:
+                messages.error(request, 'Quantidade em estoque insuficiente para o produto.')
+                return redirect('detalhes_pedido', id=pedido.id)
             return redirect('pedido')
 
 def detalhes_pedido(request,id):
     try:
+        
         pedido = Pedido.objects.get(pk=id)
     except Pedido.DoesNotExist:
         messages.error(request, 'Não foi possível encontrar o pedido solicitado')
         return redirect('pedido')
-    
+        
     if request.method == 'GET':
         itemPedido = ItemPedido(pedido=pedido)
         form = ItemPedidoForm(instance=itemPedido)
@@ -306,33 +329,6 @@ def editar_item_pedido(request, id):
         # Caso o registro não seja encontrado, exibe a mensagem de erro
         messages.error(request, 'Registro não encontrado')
         return redirect('detalhes_pedido', id=id)
-         
-    pedido = item_pedido.pedido  
-    quantidade_anterior = item_pedido.qtde 
-
-    if request.method == 'POST':
-        form = ItemPedidoForm(request.POST, instance=item_pedido)
-        if form.is_valid():
-            item_pedido = form.save(commit=False)  # prepara a instância do item_pedido sem persistir ainda
-            print(item_pedido.produto.id)
-
-        # Decrementar a quantidade do estoque
-            nova_quantidade = item_pedido.qtde
-            estoque_atual = item_pedido.produto.estoque.qtde
-
-            if estoque_atual >= nova_quantidade:
-                estoque_atual += quantidade_anterior
-                estoque_atual -= nova_quantidade
-
-                item_pedido.produto.estoque.qtde = estoque_atual
-
-                item_pedido.produto.estoque.save()
-                item_pedido.save()
-                messages.success(request, 'Operação realizada com Sucesso')
-
-            else:
-                messages.error(request, 'Quantidade em estoque insuficiente para o produto.')
-            return redirect('detalhes_pedido', id=pedido.id)
 
     else:
         form = ItemPedidoForm(instance=item_pedido)
