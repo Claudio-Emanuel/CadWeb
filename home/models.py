@@ -92,6 +92,22 @@ class Pedido(models.Model):
         """Conta a qtde de itens no pedido, """
         return self.itempedido_set.count()  
 
+
+    # lista dos pagamentos
+    @property
+    def pagamentos(self):
+        return Pagamento.objects.filter(pedido=self)
+
+    @property
+    def total_pago(self):
+        total = sum(pagamento.valor for pagamento in self.pagamentos.all())
+        return total
+
+    @property
+    def debito(self):
+        deb = self.pedido.total - self.total_pago
+        return deb
+
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
@@ -136,19 +152,3 @@ class Pagamento(models.Model):
         if self.data_pagnto:
             return self.data_pagnto.strftime('%d/%m/%Y %H:%M')
         return None
-
-
-    # lista dos pagamentos
-    @property
-    def pagamentos(self):
-        return Pagamento.objects.filter(pedido=self)
-
-    @property
-    def total_pago(self):
-        total = sum(pagamento.valor for pagamento in self.pagamentos.all())
-        return total
-
-    @property
-    def debito(self):
-        deb = self.pedido.total - self.total_pago
-        return deb
