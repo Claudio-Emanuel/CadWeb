@@ -54,9 +54,9 @@
         </tbody>
       </table>
       <hr>
-      <h5>Valor Total: R$ {{ form.instance.pedido.total }}</h5>
-      <h5>Valor Pago: R$ {{ form.instance.pedido.total_pago }}</h5>
-      <h5>Valor Restante: R$ {{ form.instance.pedido.debito }}</h5>
+      <h5>Valor Total: R$ {{ pedido.total }}</h5>
+      <h5>Valor Pago: R$ {{ pedido.total_pago }}</h5>
+      <h5>Valor Restante: R$ {{ pedido.debito }}</h5>
       {% endblock conteudo %}
       
       
