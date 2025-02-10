@@ -105,7 +105,7 @@ class Pedido(models.Model):
 
     @property
     def debito(self):
-        deb = self.pedido.total - self.total_pago
+        deb = self.total - self.total_pago
         return deb
 
 class ItemPedido(models.Model):
