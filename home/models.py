@@ -92,7 +92,6 @@ class Pedido(models.Model):
         """Conta a qtde de itens no pedido, """
         return self.itempedido_set.count()  
 
-
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
@@ -107,3 +106,49 @@ class ItemPedido(models.Model):
     def Total_parcial(self):
         total = self.qtde * self.preco
         return total
+    
+class Pagamento(models.Model):
+    
+    DINHEIRO  = 1
+    CARTAO    = 2
+    PIX       = 3
+    BOLETO    = 4
+    ESPECIE   = 5
+    OUTRO     = 6
+
+    FORMAS_CHOICES = [
+        (DINHEIRO, 'Dinheiro'),
+        (CARTAO, 'Cartão'),
+        (PIX, 'Pix'),
+        (BOLETO, 'Boleto'),
+        (ESPECIE, 'Espécie'),
+        (OUTRO, 'Outro'),
+    ]
+
+    pedido      = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    forma       = models.IntegerField(choices=FORMAS_CHOICES)
+    valor       = models.DecimalField(max_digits=10, decimal_places=2, blank=False)
+    data_pagnto = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def data_pagntof(self):
+        # Retorna a data no formato DD/MM/AAAA HH:MM
+        if self.data_pagnto:
+            return self.data_pagnto.strftime('%d/%m/%Y %H:%M')
+        return None
+
+
+    # lista dos pagamentos
+    @property
+    def pagamentos(self):
+        return Pagamento.objects.filter(pedido=self)
+
+    @property
+    def total_pago(self):
+        total = sum(pagamento.valor for pagamento in self.pagamentos.all())
+        return total
+
+    @property
+    def debito(self):
+        deb = self.pedido.total - self.total_pago
+        return deb

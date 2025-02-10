@@ -112,3 +112,33 @@ class ItemPedidoForm(forms.ModelForm):
         if preco <= 0:
             raise forms.ValidationError("O campo preço deve ser maior que zero.")
         return preco
+    
+class PagamentoForm(forms.ModelForm):
+    class Meta:
+        model= Pagamento
+        fields = ['pedido', 'valor', 'forma']
+        widgets = {
+            'pedido': forms.HiddenInput(),
+            'valor': forms.TextInput(attrs={
+                'class': 'money form-control', 
+                'placeholder': '0.000,00',
+                'maxlength': 500,
+                }),
+            'forma': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(PagamentoForm, self).__init__(*args, **kwargs)
+        self.fields['valor'].localize = True
+        self.fields['valor'].widget.is_localized = True
+    
+    def clean_valor(self):
+        valor = self.cleaned_data.get('valor')
+        if valor <= 0:
+            raise forms.ValidationError("O campo valor deve ser maior que zero.")
+        return valor
+
+
+
+
+

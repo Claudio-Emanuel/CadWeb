@@ -359,5 +359,28 @@ def remover_item_pedido(request, id):
 
     # Redireciona de volta para a página de detalhes do pedido
     return redirect('detalhes_pedido', id=pedido_id)
+#---------------------------------------------------------------------Pedido---------------------------------------------------------------------
 
+#---------------------------------------------------------------------Pagamento---------------------------------------------------------------------
+def form_pagamento(request,id):
 
+    try:
+        pedido = Pedido.objects.get(pk=id)
+    except Pedido.DoesNotExist:
+        messages.error(request, 'Não foi possível encontrar o pedido solicitado')
+        return redirect('pedido')
+    
+    if request.method == 'POST':
+        form = PagamentoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Pagamento realizado com sucesso')
+
+    pagamento = Pagamento(pedido=pedido)
+    form =  PagamentoForm(instance=pagamento)
+    contexto = {
+        'pedido': pedido,
+        'form': form,
+
+    }
+    return render(request, 'pedido/pagamento.html', contexto)

@@ -24,7 +24,7 @@
 
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Adicionar produto</button>
-        <button type="button" onclick="location=''" class= "btn btn-primary btn-sm">Registrar pagamento</button>
+        <button type="button" onclick="location='{% url 'pagamentos_pedido' pedido.id %}'" class= "btn btn-primary btn-sm">Registrar pagamento</button>
 
 
     <h5>Itens do Pedido</h5>

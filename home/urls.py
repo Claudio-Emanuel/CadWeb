@@ -27,4 +27,5 @@ urlpatterns = [
     path('novo_pedido/<int:id>', views.novo_pedido, name='novo_pedido'),
     path('detail_pedido/<int:id>', views.detalhes_pedido, name='detalhes_pedido'),
     path('remover_item_pedido/<int:id>', views.remover_item_pedido, name='remover_item_pedido'),
+    path('pagamentos_pedido/<int:id>', views.form_pagamento, name='pagamentos_pedido'),
 ]
