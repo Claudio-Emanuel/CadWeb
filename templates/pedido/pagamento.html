@@ -35,7 +35,7 @@
           </tr>
         </thead>
         <tbody>
-            {% for pagamento in form.instance.pedido.pagamentos.all %}
+            {% for pagamento in form.instance.pagamentos %}
                  <tr>
                      <td>{{ pagamento.id }}</td>
                      <td>{{ pagamento.valor }}</td>
