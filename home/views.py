@@ -273,49 +273,50 @@ def novo_pedido(request,id):
     
     else: # se for metodo post, salva o pedido.
         form = PedidoForm(request.POST,instance=item_pedido)
-        pedido = item_pedido.pedido  
-        quantidade_anterior = item_pedido.qtde 
-        if form.is_valid():
-            pedido = form.save()
-            item_pedido = form.save(commit=False)  # prepara a instância do item_pedido sem persistir ainda
-            print(item_pedido.produto.id)
-            nova_quantidade = item_pedido.qtde
-            estoque_atual = item_pedido.produto.estoque.qtde
-
-            if estoque_atual >= nova_quantidade:
-                estoque_atual += quantidade_anterior
-                estoque_atual -= nova_quantidade
-
-                item_pedido.produto.estoque.qtde = estoque_atual
-
-                item_pedido.produto.estoque.save()
-                item_pedido.save()
-                messages.success(request, 'Operação realizada com Sucesso')
-
-            else:
-                messages.error(request, 'Quantidade em estoque insuficiente para o produto.')
-                return redirect('detalhes_pedido', id=pedido.id)
-            return redirect('pedido')
+        
+    return redirect('pedido')
 
 def detalhes_pedido(request,id):
     try:
-        
         pedido = Pedido.objects.get(pk=id)
     except Pedido.DoesNotExist:
         messages.error(request, 'Não foi possível encontrar o pedido solicitado')
         return redirect('pedido')
-        
+
     if request.method == 'GET':
         itemPedido = ItemPedido(pedido=pedido)
         form = ItemPedidoForm(instance=itemPedido)
     else:
         form = ItemPedidoForm(request.POST)
         if form.is_valid():
-            item_pedido = form.save(commit=False)
+            item_pedido = form.save(commit=False)  # Inicializa item_pedido antes de acessar
+
+            # Obtém o estoque do produto de forma segura
+            try:
+                estoque = Estoque.objects.get(produto=item_pedido.produto)
+            except Estoque.DoesNotExist:
+                messages.error(request, 'Erro: Estoque não encontrado para o produto.')
+                return redirect('detalhes_pedido', id=pedido.id)
+
+            # Verifica se há quantidade suficiente no estoque
+            if estoque.qtde < item_pedido.qtde:
+                messages.error(request, 'Quantidade em estoque insuficiente para o produto.')
+                return redirect('detalhes_pedido', id=pedido.id)
+
+            # Atualiza o estoque
+            estoque.qtde -= item_pedido.qtde
+            estoque.save()  # Salva a alteração no banco de dados
+
+            # Associa o item ao pedido e salva
+            item_pedido.pedido = pedido
             item_pedido.preco = item_pedido.produto.preco
             item_pedido.save()
-        else:
-            messages.error(request, 'Erro ao adicionar item ao pedido')
+
+            messages.success(request, 'Item adicionado ao pedido com sucesso.')
+
+    # Recria um novo itemPedido para ser renderizado no formulário
+    itemPedido = ItemPedido(pedido=pedido)
+    form = ItemPedidoForm(instance=itemPedido)
     contexto = {
         'pedido': pedido,
         'form': form,
