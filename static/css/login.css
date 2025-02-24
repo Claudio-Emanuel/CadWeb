@@ -1,0 +1,36 @@
+.bg {
+    background-color:black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.card {
+    background-color: royalblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 800px;
+    height: 400px;
+    border-radius: 10px;
+}
+
+.card2{
+    background-color: whitesmoke;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
+    height: 90%;
+    border-radius: 10px;
+}
+h5{
+    font-size: 50pt;
+    font-weight: 400;
+    color: black;
+    margin: 10px;
+    font-family: "Aclonica", sans-serif;
+}

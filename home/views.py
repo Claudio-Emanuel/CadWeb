@@ -5,15 +5,19 @@ from django.http import JsonResponse
 from django.apps import apps
 from .models import *
 from .forms import *
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 
 #--------------------------------------------------------    
+@login_required
 def index(request):
     return render(request,'index.html')
 
 
 
 #---------------------------------------------------------------------Categoria---------------------------------------------------------------------
+@login_required
 def categoria(request):
     contexto = {
         'lista' : Categoria.objects.all().order_by('id'),
@@ -82,6 +86,7 @@ def detail_categoria(request,id):
 
 
 #---------------------------------------------------------------------Cliente---------------------------------------------------------------------
+@login_required
 def cliente(request):
     contexto = {
         'lista' : Cliente.objects.all().order_by('id'),
@@ -153,7 +158,7 @@ def editar_cliente(request, id):
 #---------------------------------------------------------------------Cliente---------------------------------------------------------------------
 
 #---------------------------------------------------------------------Produto---------------------------------------------------------------------
-
+@login_required
 def produto(request):
         contexto = {
             'lista' : Produto.objects.all().order_by('id'),
@@ -255,6 +260,7 @@ def buscar_dados(request, app_modelo):
 
 
 #---------------------------------------------------------------------Pedido---------------------------------------------------------------------
+@login_required
 def pedido(request):
     listaP = Pedido.objects.all().order_by('-id')
     return render(request, 'pedido/pedido.html', {'listaP': listaP})
@@ -363,6 +369,7 @@ def remover_item_pedido(request, id):
 #---------------------------------------------------------------------Pedido---------------------------------------------------------------------
 
 #---------------------------------------------------------------------Pagamento---------------------------------------------------------------------
+@login_required
 def form_pagamento(request,id):
 
     try:
@@ -385,3 +392,21 @@ def form_pagamento(request,id):
 
     }
     return render(request, 'pedido/pagamento.html', contexto)
+
+@login_required
+def delet_pagamento(request,id):
+    try:
+        pagamento = Pagamento.objects.get(pk=id)
+        pedido_id = pagamento.pedido.id
+        pagamento.delete()
+        messages.success(request, 'Pagamento deletado com sucesso')
+    except Pagamento.DoesNotExist:
+        messages.error(request, 'Não foi possível encontrar o pagamento solicitado')
+        return redirect('pedido')
+    return redirect('detalhes_pedido', id=pedido_id)
+#---------------------------------------------------------------------Pagamento---------------------------------------------------------------------
+
+@login_required
+def nota_fiscal(request,id):
+    pedido = Pedido.objects.get(pk=id)
+    return render(request, 'pedido/nota_fiscal.html', {'pedido': pedido})

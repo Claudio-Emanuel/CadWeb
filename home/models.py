@@ -1,5 +1,6 @@
+import hashlib
 from django.db import models
-
+from decimal import Decimal
 class Categoria(models.Model):
     nome= models.CharField(max_length=100)
     ordem= models.IntegerField()
@@ -107,6 +108,53 @@ class Pedido(models.Model):
     def debito(self):
         deb = self.total - self.total_pago
         return deb
+    
+    @property
+    def icms(self):
+        return self.total * Decimal(0.18)
+    
+    @property
+    def ipi(self):
+        return self.total * Decimal('0.05')
+
+    @property
+    def pis(self):
+        return self.total * Decimal('0.0165')
+
+    @property
+    def cofins(self):
+        return self.total * Decimal('0.076')
+
+    @property
+    def total_tributos(self):
+        return self.total + self.icms + self.ipi + self.pis + self.cofins
+    
+    @property
+    def total_completo(self):
+        return self.total + self.total_tributos
+    
+    @property
+    def data_pedido_key(self):
+        if self.data_pedido:
+            return self.data_pedido.strftime('%Y%m%d')
+        return None
+    
+    @property
+    def chave_acesso(self):
+        # Combina o ID do pedido e a data formatada
+        if self.id and self.data_pedido_key:
+            dados_comb = f"{self.id}{self.data_pedido_key}"
+        
+            # Cria o hash com sha256
+            sha256 = hashlib.sha256()
+            sha256.update(dados_comb.encode('utf-8'))  # Codificando a string para bytes
+            key_final = f"{self.data_pedido_key}{self.id}{sha256.hexdigest()}"
+            
+            # Remove caracteres não numéricos
+            key_final_numerico = ''.join(filter(str.isdigit, key_final))
+            return key_final_numerico  # Retorna a chave de acesso contendo apenas números
+        return None
+    
 
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
